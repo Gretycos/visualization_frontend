@@ -1,5 +1,5 @@
 <template>
-    <div class="chinaMap">
+    <div class="myCharts">
         <div ref="chart" :style="{height:'870px',width:'100%'}"></div>
     </div>
 </template>
@@ -16,24 +16,20 @@
                 data:[], // 总数据
                 timelineData:[], // 时间轴
                 options:[], // 每个系列的数据
-                barYs:[], // 条形图纵轴是国名
+                barYs:[], // 条形图纵轴所有国名
                 barY:[], // 条形图纵轴是国名
-                line1:[],
-                line2:[],
-                line3:[]
+                line1:[], //折线图1需要变化的数据
+                line2:[], //折线图2需要变化的数据
+                line3:[] //折线图3需要变化的数据
             }
         },
         mounted(){
             this.myChart = this.$echarts.init(this.$refs.chart);
             if (sessionStorage.getItem("data") == null){
-                // [this.options, this.timelineData] = this.getData();
                 this.getData();
             }else{
-                // this.options = JSON.parse(sessionStorage['options']);
-                // this.timelineData = JSON.parse(sessionStorage['timelineData']);
                 this.data = JSON.parse(sessionStorage['data']);
                 this.parseData();
-
             }
         },
         methods:{
@@ -46,12 +42,10 @@
             },
 
             parseData(){
-                this.myChart.on('timelinechanged', (params) => {
-                    // console.log(params.currentIndex)
-                    console.log(this.barYs)
+                this.myChart.on('timelinechanged', (params) => { // 设置时间轴变化监听
+                    // console.log(this.barYs)
                     this.barY = this.barYs[params.currentIndex];
-                    // console.log(this.barY)
-                    this.myChart.setOption({
+                    this.myChart.setOption({ // 柱状图国家排名变化
                         yAxis:{
                             id:0,
                             data: this.barY,
@@ -119,7 +113,6 @@
                 this.timelineData = timelineData;
                 this.drawMap();
             },
-
             convertData1(dateData){ //从当日数据筛选出地图需要的数据
                 var convertData = dateData.map(item=>{
                     return{
@@ -131,7 +124,6 @@
                     return ! this.country.concat('非湖北').includes(item.name);
                 });
             },
-
             convertData2(dateData){ //从当日数据筛选出条形图需要的数据
                 var convertData = dateData.map(item=>{
                     return{
@@ -151,7 +143,6 @@
                 this.barYs.push(barY);
                 return convertData
             },
-
             convertData3(dateData){ //从当日数据筛选出折线图1需要的数据 --- 确诊
                 var convertData = dateData.map(item=>{
                     return{
@@ -164,7 +155,6 @@
                 }));
                 return this.line1
             },
-
             convertData4(dateData){ //从当日数据筛选出折线图2需要的数据 --- 治愈
                 var convertData = dateData.map(item=>{
                     return{
@@ -177,7 +167,6 @@
                 }));
                 return this.line2
             },
-
             convertData5(dateData){ //从当日数据筛选出折线图3需要的数据 --- 死亡
                 var convertData = dateData.map(item=>{
                     return{
@@ -190,7 +179,6 @@
                 }));
                 return this.line3
             },
-
             convertData6(dateData){ //从当日数据筛选出玫瑰图需要的数据
                 var convertData = dateData.map(item=>{
                     return{
@@ -257,7 +245,7 @@
                             right:0,
                             bottom:0
                         },
-                        title: [
+                        title: [ // 各种图表的标题
                             {
                                 text: '新冠肺炎疫情（截止至6月22日）',
                                 left:'44%',
@@ -294,7 +282,7 @@
                                 top:'8%'
                             }
                         ],
-                        tooltip:{
+                        tooltip:{ // 全局弹窗气泡
                             trigger: 'axis',
                             axisPointer: {
                                 type: 'cross',
@@ -302,7 +290,7 @@
                                     color: '#999'
                                 }
                             }
-                        }, // 全局的弹窗
+                        },
                         visualMap: { // 视觉通道
                             type: 'piecewise',
                             show: true,
@@ -387,7 +375,7 @@
                                 top:400
                             }
                         ],
-                        geo: { // 这个是重点配置区
+                        geo: { // 地图配置
                             map: 'china', // 表示中国地图
                             roam: false,
                             label: {
@@ -422,7 +410,7 @@
                             {dim: 2, name: '累计治愈'},
                             {dim: 3, name: '累积死亡'},
                         ],
-                        parallel: { // 平行图
+                        parallel: { // 平行坐标系图
                             left: '3%',
                             bottom: '8%',
                             width:'30%',
@@ -454,10 +442,10 @@
                                 }
                             }
                         },
-                        textStyle: {
+                        textStyle: { // 全局字体颜色
                             color: "#000"
                         },
-                        series: [ // 系列列表
+                        series: [ // 系列列表定义
                             { // 地图
                                 name: '国内疫情',
                                 type: 'map',
@@ -556,13 +544,13 @@
                     },
                     options: this.options
                 });
-            },
+            }
         }
     }
 </script>
 
 <style scoped>
-.chinaMap{
+.myCharts{
     display: flex;
     justify-content: center;
 }
