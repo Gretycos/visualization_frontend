@@ -1,6 +1,6 @@
 <template>
     <div class="chinaMap">
-        <div ref="chart" :style="{height:'840px',width:'100%'}"></div>
+        <div ref="chart" :style="{height:'870px',width:'100%'}"></div>
     </div>
 </template>
 
@@ -69,6 +69,10 @@
                             {name:"",data:null}, // 折线图系列 --- 国内治愈
                             {name:"",data:null}, // 折线图系列 --- 国内死亡
                             {name:"",data:null}, // 玫瑰图系列 --- 湖北对比非湖北
+                            {name:"",data:null}, // 平行坐标图系列 --- 中国
+                            {name:"",data:null}, // 平行坐标图系列 --- 美国
+                            {name:"",data:null}, // 平行坐标图系列 --- 英国
+                            {name:"",data:null}, // 平行坐标图系列 --- 俄罗斯
                         ]
                     }
 
@@ -99,6 +103,15 @@
 
                     option.series[5].name = time+"湖北与非湖北确诊对比";
                     option.series[5].data = this.convertData6(this.data[i]);
+
+                    option.series[6].name = time+"中国情况";
+                    option.series[6].data = this.convertData7(this.data[i]);
+                    option.series[7].name = time+"美国情况";
+                    option.series[7].data = this.convertData8(this.data[i]);
+                    option.series[8].name = time+"英国情况";
+                    option.series[8].data = this.convertData9(this.data[i]);
+                    option.series[9].name = time+"俄罗斯情况";
+                    option.series[9].data = this.convertData10(this.data[i]);
 
                     options.push(option)
                 }
@@ -189,7 +202,42 @@
                     return ['湖北','非湖北'].includes(item.name);
                 });
             },
-
+            convertData7(dateData){ //从当日数据筛选出平行坐标图需要的数据 --- 中国
+                var convertData = dateData.filter(item=>{
+                    return ['中国'].includes(item.provinceName);
+                });
+                convertData = convertData.map(item=>{
+                    return ['中国'].concat(item.provinceConfirmedCount,item.provinceCuredCount,item.provinceDeadCount)
+                });
+                return convertData
+            },
+            convertData8(dateData){ //从当日数据筛选出平行坐标图需要的数据 --- 美国
+                var convertData = dateData.filter(item=>{
+                    return ['美国'].includes(item.provinceName);
+                });
+                convertData = convertData.map(item=>{
+                    return ['美国'].concat(item.provinceConfirmedCount,item.provinceCuredCount,item.provinceDeadCount)
+                });
+                return convertData
+            },
+            convertData9(dateData){ //从当日数据筛选出平行坐标图需要的数据 --- 英国国
+                var convertData = dateData.filter(item=>{
+                    return ['英国'].includes(item.provinceName);
+                });
+                convertData = convertData.map(item=>{
+                    return ['英国'].concat(item.provinceConfirmedCount,item.provinceCuredCount,item.provinceDeadCount)
+                });
+                return convertData
+            },
+            convertData10(dateData){ //从当日数据筛选出平行坐标图需要的数据 --- 英国国
+                var convertData = dateData.filter(item=>{
+                    return ['俄罗斯'].includes(item.provinceName);
+                });
+                convertData = convertData.map(item=>{
+                    return ['俄罗斯'].concat(item.provinceConfirmedCount,item.provinceCuredCount,item.provinceDeadCount)
+                });
+                return convertData
+            },
             drawMap(){
                 // 基于准备好的dom，初始化echarts实例
                 // 绘制图表
@@ -211,40 +259,53 @@
                         },
                         title: [
                             {
-                                text: '新冠肺炎疫情（截止至6月23日）',
-                                left:600,
+                                text: '新冠肺炎疫情（截止至6月22日）',
+                                left:'44%',
                                 top:0
                             },
                             {
                                 text: '国内确诊情况',
-                                left:660,
-                                top:150
-                            },
-                            {
-                                text: '世界确诊情况',
-                                left:200,
-                                top:60
+                                left:'46%',
+                                top:'20%'
                             },
                             {
                                 text: '湖北与非湖北对比',
-                                left:150,
-                                top:480
+                                left:'45%',
+                                top:'87%'
+                            },
+                            {
+                                text: '世界确诊情况(部分)',
+                                left:'13%',
+                                top:'8%'
+                            },
+                            {
+                                text: '世界主要国家疫情对比',
+                                left:'14%',
+                                top:'53%'
                             },
                             {
                                 text: '国内确诊趋势',
-                                right:160,
-                                top:430
+                                right:'12%',
+                                top:'52%'
                             },
                             {
                                 text: '国内治愈与死亡趋势',
-                                right:150,
-                                top:60
+                                right:'10%',
+                                top:'8%'
                             }
                         ],
-                        tooltip:{}, // 全局的弹窗
+                        tooltip:{
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'cross',
+                                crossStyle: {
+                                    color: '#999'
+                                }
+                            }
+                        }, // 全局的弹窗
                         visualMap: { // 视觉通道
                             type: 'piecewise',
-                            show: true,
+                            show: false,
                             pieces:[
                                 {min:0, max:99, label: '确诊人数<100'},
                                 {min:100, max:499, label: '100≤确诊人数<500'},
@@ -257,8 +318,8 @@
                                 {min:50000, label: '确诊人数≥50000'}
                             ],
                             inRange: {
-                                color: ['#e5ab00', '#ffa170','#ff781e', '#ff7800',
-                                    '#ff9600', '#ff5a00','#ff0000', '#c70d00',
+                                color: ['#f8e1aa', '#ffd25d','#ffae66', '#ff8c00',
+                                    '#ff6f00', '#ff5a00','#ff0000', '#c70d00',
                                     '#970000']
                             },
                             realtime: false,
@@ -266,10 +327,10 @@
                             left:600,
                             bottom:100
                         },
-                        grid:[
+                        grid:[ // 网格
                             {x: '5%', y: '12%', width: '28%', height: '35%'},
-                            {x2: '1%', y2: '10%', width: '30%', height: '35%'},
-                            {x2: '1%', y: '12%', width: '30%', height: '35%'},
+                            {x2: '1%', y2: '14%', width: '30%', height: '30%'},
+                            {x2: '1%', y: '12%', width: '30%', height: '30%'},
                         ],
                         xAxis: [
                             {   // 条形
@@ -290,17 +351,37 @@
                         yAxis:[
                             {   // 条形
                                 id:0,
-                                gridIndex:0,
+                                gridIndex:0, // 对应的grid
                                 type: 'category',
                                 data: ['中国','巴西','伊朗','意大利','西班牙','印度','智利','美国','英国','秘鲁','俄罗斯']
                             },
                             {   // 折线
-                                gridIndex:1,
+                                gridIndex:1, // 对应的grid
                                 type: 'value'
                             },
                             {   // 折线
-                                gridIndex:2,
+                                gridIndex:2, // 对应的grid
                                 type: 'value'
+                            }
+                        ],
+                        dataZoom:[ // 数据筛选
+                            {
+                                type:'slider',
+                                show:true,
+                                xAxisIndex:1,
+                                start:1,
+                                end:14,
+                                right:15,
+                                bottom:60
+                            },
+                            {
+                                type:'slider',
+                                show:true,
+                                xAxisIndex:2,
+                                start:1,
+                                end:14,
+                                right:15,
+                                top:400
                             }
                         ],
                         geo: { // 这个是重点配置区
@@ -331,6 +412,48 @@
                             top:0,
                             zoom: 0.5
                         },
+                        parallelAxis: [ // 平行轴属性
+                            {dim: 0, name: '国家',
+                                type: 'category', data: ['中国', '美国', '英国','俄罗斯']},
+                            {dim: 1, name: '累计确诊'},
+                            {dim: 2, name: '累计治愈'},
+                            {dim: 3, name: '累积死亡'},
+                        ],
+                        parallel: { // 平行图
+                            left: '3%',
+                            bottom: '8%',
+                            width:'30%',
+                            height:'30%',
+                            parallelAxisDefault: {
+                                type: 'value',
+                                name: '世界对比',
+                                nameLocation: 'end',
+                                nameGap: 20,
+                                nameTextStyle: {
+                                    color: '#000',
+                                    fontSize: 12
+                                },
+                                axisLine: {
+                                    lineStyle: {
+                                        color: '#717171'
+                                    }
+                                },
+                                axisTick: {
+                                    lineStyle: {
+                                        color: '#575757'
+                                    }
+                                },
+                                splitLine: {
+                                    show: false
+                                },
+                                axisLabel: {
+                                    color: '#000'
+                                }
+                            }
+                        },
+                        textStyle: {
+                            color: "#000"
+                        },
                         series: [ // 系列列表
                             { // 地图
                                 name: '国内疫情',
@@ -355,14 +478,7 @@
                                 name: '国内确诊趋势',
                                 type: 'line',
                                 tooltip: { // 鼠标移到图里面的浮动提示框
-                                    show:true,
                                     trigger: 'axis',
-                                    axisPointer: {
-                                        type: 'cross',
-                                        crossStyle: {
-                                            color: '#999'
-                                        }
-                                    },
                                     formatter: '{b}<br/>累积确诊人数：{c}'
                                 },
                                 xAxisIndex: 1,
@@ -372,14 +488,7 @@
                                 name: '国内治愈趋势',
                                 type: 'line',
                                 tooltip: { // 鼠标移到图里面的浮动提示框
-                                    show:true,
                                     trigger: 'axis',
-                                    axisPointer: {
-                                        type: 'cross',
-                                        crossStyle: {
-                                            color: '#999'
-                                        }
-                                    },
                                     formatter: '{b}<br/>累积治愈人数：{c}'
                                 },
                                 xAxisIndex: 2,
@@ -389,14 +498,7 @@
                                 name: '国内死亡趋势',
                                 type: 'line',
                                 tooltip: { // 鼠标移到图里面的浮动提示框
-                                    show:true,
                                     trigger: 'axis',
-                                    axisPointer: {
-                                        type: 'cross',
-                                        crossStyle: {
-                                            color: '#999'
-                                        }
-                                    },
                                     formatter: '{b}<br/>累积死亡人数：{c}'
                                 },
 
@@ -406,14 +508,42 @@
                             {   //玫瑰图
                                 name: '湖北与非湖北对比',
                                 type: 'pie',
-                                center: ['15%', '75%'], // 中心坐标
+                                center: ['50%', '75%'], // 中心坐标
                                 roseType: 'radius', // 半径模式
                                 radius: [30, 90], // 内外半径
                                 tooltip: { // 鼠标移到图里面的浮动提示框
                                     trigger: 'item',
                                     formatter: '{b}<br/>累积确诊人数：{c}'
                                 },
-                            }
+                            },
+                            {   //平行坐标系
+                                name: '中国平行坐标系',
+                                type: 'parallel',
+                                lineStyle:{
+                                    width: 3
+                                }
+                            },
+                            {   //平行坐标系
+                                name: '美国平行坐标系',
+                                type: 'parallel',
+                                lineStyle:{
+                                    width: 3
+                                }
+                            },
+                            {   //平行坐标系
+                                name: '英国平行坐标系',
+                                type: 'parallel',
+                                lineStyle:{
+                                    width: 3
+                                }
+                            },
+                            {   //平行坐标系
+                                name: '俄罗斯平行坐标系',
+                                type: 'parallel',
+                                lineStyle:{
+                                    width: 3
+                                }
+                            },
                         ]
                     },
                     options: this.options
