@@ -305,17 +305,18 @@
                         }, // 全局的弹窗
                         visualMap: { // 视觉通道
                             type: 'piecewise',
-                            show: false,
+                            show: true,
+                            itemGap:5,
                             pieces:[
-                                {min:0, max:99, label: '确诊人数<100'},
-                                {min:100, max:499, label: '100≤确诊人数<500'},
-                                {min:500, max:999, label: '500≤确诊人数<1000'},
-                                {min:1000, max:1999, label: '1000≤确诊人数<2000'},
-                                {min:2000, max:4999, label: '2000≤确诊人数<5000'},
-                                {min:5000, max:9999, label: '5000≤确诊人数<10000'},
-                                {min:10000, max:19999, label: '10000≤确诊人数<20000'},
-                                {min:20000, max:49999, label: '20000≤确诊人数<50000'},
-                                {min:50000, label: '确诊人数≥50000'}
+                                {min:0, max:99, label: '<100'},
+                                {min:100, max:499, label: '<500'},
+                                {min:500, max:999, label: '<1000'},
+                                {min:1000, max:1999, label: '<2000'},
+                                {min:2000, max:4999, label: '<5000'},
+                                {min:5000, max:9999, label: '<10000'},
+                                {min:10000, max:19999, label: '<20000'},
+                                {min:20000, max:49999, label: '<50000'},
+                                {min:50000, label: '≥50000'}
                             ],
                             inRange: {
                                 color: ['#f8e1aa', '#ffd25d','#ffae66', '#ff8c00',
@@ -324,8 +325,10 @@
                             },
                             realtime: false,
                             calculable: true,
-                            left:600,
-                            bottom:100
+                            orient: 'horizontal',
+                            left:'31%',
+                            top:'5%',
+                            seriesIndex:[0,5]
                         },
                         grid:[ // 网格
                             {x: '5%', y: '12%', width: '28%', height: '35%'},
@@ -520,28 +523,33 @@
                                 name: '中国平行坐标系',
                                 type: 'parallel',
                                 lineStyle:{
-                                    width: 3
+                                    width: 3,
+                                    color: '#ff2335'
                                 }
                             },
                             {   //平行坐标系
                                 name: '美国平行坐标系',
                                 type: 'parallel',
                                 lineStyle:{
-                                    width: 3
+                                    width: 3,
+                                    color: '#494cff'
                                 }
                             },
                             {   //平行坐标系
                                 name: '英国平行坐标系',
                                 type: 'parallel',
                                 lineStyle:{
-                                    width: 3
+                                    width: 3,
+                                    color: '#49dbff'
                                 }
                             },
                             {   //平行坐标系
                                 name: '俄罗斯平行坐标系',
                                 type: 'parallel',
                                 lineStyle:{
-                                    width: 3
+                                    width: 3,
+                                    color: '#ffe358'
+
                                 }
                             },
                         ]
